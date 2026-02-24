@@ -49,7 +49,7 @@ export const useMarketsStore = defineStore('markets', () => {
   const markets = ref<Market[]>([])
   const loading = ref(false)
 
-  const categories = ['全部', '体育', 'AI科技', '加密货币', '商业', '金融', '政治', '娱乐']
+  const categories = ['全部', '加密市场', '股票市场', '商品市场', '外汇市场', '体育', 'AI科技', '加密货币', '商业', '金融', '政治', '娱乐']
 
   async function fetchMarkets() {
     loading.value = true
