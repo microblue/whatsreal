@@ -7,10 +7,11 @@
 - 紫粉渐变主题，深色背景
 - Dev server port: 5174（避免和 vstudio 5173 冲突）
 - Cloudflare Pages 部署成功，项目名: whatsreal
-- 线上地址: https://whatsreal.pages.dev
-- 最新部署: https://4d4077aa.whatsreal.pages.dev (2026-02-24)
-- 部署命令: `cd /home/dz/whatsreal && source /home/dz/.openclaw/cloudflare-env.sh && npm run build && npx wrangler pages deploy dist --project-name whatsreal --branch main --commit-dirty=true`
+- 线上地址: https://whatsreal.pages.dev ⭐ (推荐)
+- 最新部署: https://6907d05e.whatsreal.pages.dev (2026-02-24)
+- 部署命令: `cd /home/dz/whatsreal && ./deploy.sh` 或 `source /home/dz/.openclaw/cloudflare-env.sh && npm run build && npx wrangler pages deploy dist --project-name whatsreal --commit-dirty=true`
 - 必须用 `--branch main` 部署（和 vstudio 一样）
+- GitHub 仓库: https://github.com/microblue/whatsreal
 - Supabase project ref: xwbtovojdqydupvyzipr
 - Supabase URL: https://xwbtovojdqydupvyzipr.supabase.co
 - DB password: 5AngALNaiCZtVK5aaRvZow==
