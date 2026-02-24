@@ -15,6 +15,10 @@
   * 简洁的预测市场平台，无复杂的AI营销内容
   * 恢复"WhatsReal"原始标题
   * 用户可以创建市场、浏览市场、参与投票交易
+  * **数据恢复更新**：恢复丰富市场数据和四大分类
+  * 15个高质量demo市场（含真实交易量和价格数据）
+  * 四大市场分类：加密市场、股票市场、商品市场、外汇市场
+  * 解决回滚后数据丢失问题，现在数据完整丰富
 - 部署命令: `cd /home/dz/whatsreal && ./deploy.sh` 或 `source /home/dz/.openclaw/cloudflare-env.sh && npm run build && npx wrangler pages deploy dist --project-name whatsreal --commit-dirty=true`
 - 必须用 `--branch main` 部署（和 vstudio 一样）
 - GitHub 仓库: https://github.com/microblue/whatsreal
