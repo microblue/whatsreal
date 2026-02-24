@@ -18,3 +18,4 @@
 - Schema 已推送（profiles, markets, positions, trades, comments + RLS）
 - IPv6 不通，db push 需用 `--dns-resolver https`
 - 邮件验证：需在 Dashboard 关闭 enable_confirmations
+- 项目文档: `doc/WhatsReal_Whitepaper_v2.0.pdf` - 完整白皮书（技术架构、代币经济模型、路线图）
