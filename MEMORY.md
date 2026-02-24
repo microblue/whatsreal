@@ -8,7 +8,13 @@
 - Dev server port: 5174（避免和 vstudio 5173 冲突）
 - Cloudflare Pages 部署成功，项目名: whatsreal
 - 线上地址: https://whatsreal.pages.dev ⭐ (推荐)
-- 最新部署: https://6907d05e.whatsreal.pages.dev (2026-02-24)
+- **回滚到初始版本** (commit 229f214): https://whatsreal.pages.dev (2026-02-24)
+  * 恢复基础预测市场功能
+  * 包含：首页、市场详情、创建市场、个人中心页面
+  * 保留原始的6个示例市场和基础交易功能
+  * 简洁的预测市场平台，无复杂的AI营销内容
+  * 恢复"WhatsReal"原始标题
+  * 用户可以创建市场、浏览市场、参与投票交易
 - 部署命令: `cd /home/dz/whatsreal && ./deploy.sh` 或 `source /home/dz/.openclaw/cloudflare-env.sh && npm run build && npx wrangler pages deploy dist --project-name whatsreal --commit-dirty=true`
 - 必须用 `--branch main` 部署（和 vstudio 一样）
 - GitHub 仓库: https://github.com/microblue/whatsreal
