@@ -153,28 +153,28 @@
 
             <!-- Resolve button for creator -->
             <div v-if="authStore.userId && market.status === 'active'" class="mt-4 pt-4 border-t border-base-300">
-              <h3 class="text-sm font-medium mb-2">结算市场</h3>
+              <h3 class="text-sm font-medium mb-2">{{ $t('markets.details.settleMarket') }}</h3>
               <div class="flex gap-2">
-                <button @click="handleResolve('yes')" class="btn btn-sm btn-success flex-1">结算为 是</button>
-                <button @click="handleResolve('no')" class="btn btn-sm btn-error flex-1">结算为 否</button>
+                <button @click="handleResolve('yes')" class="btn btn-sm btn-success flex-1">{{ $t('markets.details.settleYes') }}</button>
+                <button @click="handleResolve('no')" class="btn btn-sm btn-error flex-1">{{ $t('markets.details.settleNo') }}</button>
               </div>
             </div>
           </div>
 
           <!-- Market info -->
           <div class="bg-base-200 rounded-xl p-6">
-            <h3 class="font-semibold mb-3 text-sm">市场信息</h3>
+            <h3 class="font-semibold mb-3 text-sm">{{ $t('markets.details.marketInfo') }}</h3>
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
-                <span class="text-base-content/50">总交易量</span>
+                <span class="text-base-content/50">{{ $t('markets.details.volume') }}</span>
                 <span>¥{{ (market.volume || 0).toLocaleString() }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-base-content/50">流动性参数</span>
+                <span class="text-base-content/50">{{ $t('create.form.liquidity') }}</span>
                 <span>{{ market.liquidity_param || 100 }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-base-content/50">截止日期</span>
+                <span class="text-base-content/50">{{ $t('markets.details.endDate') }}</span>
                 <span>{{ market.end_date }}</span>
               </div>
               <div class="flex justify-between">
@@ -190,7 +190,7 @@
     </template>
 
     <div v-else class="text-center py-20 text-base-content/40">
-      市场不存在
+      {{ $t('markets.details.notFound') }}
     </div>
   </div>
 </template>
@@ -198,6 +198,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useMarketsStore, type Market, type Trade } from '@/stores/markets'
 import { useAuthStore } from '@/stores/auth'
 import { supabase } from '@/lib/supabase'
@@ -207,6 +208,7 @@ const route = useRoute()
 const router = useRouter()
 const marketsStore = useMarketsStore()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const market = ref<Market | null>(null)
 const trades = ref<Trade[]>([])
@@ -383,7 +385,7 @@ async function handleTrade() {
 
 async function handleResolve(resolution: string) {
   if (!authStore.userId || !market.value) return
-  if (!confirm(`确定将市场结算为「${resolution === 'yes' ? '是' : '否'}」？此操作不可撤销。`)) return
+  if (!confirm(t('markets.details.confirmSettle', { resolution: resolution === 'yes' ? t('markets.details.yes') : t('markets.details.no') }))) return
   try {
     await marketsStore.resolveMarket(market.value.id, resolution, authStore.userId!)
     await loadData()

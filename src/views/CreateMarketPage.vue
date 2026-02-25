@@ -64,7 +64,7 @@
       </div>
 
       <div>
-        <label class="text-sm font-medium mb-1 block">流动性参数 (b值): {{ form.liquidity_param }}</label>
+        <label class="text-sm font-medium mb-1 block">{{ $t('create.form.liquidity') }} (b值): {{ form.liquidity_param }}</label>
         <input
           v-model.number="form.liquidity_param"
           type="range"
@@ -80,24 +80,24 @@
       </div>
 
       <div>
-        <label class="text-sm font-medium mb-1 block">初始流动性 (积分)</label>
+        <label class="text-sm font-medium mb-1 block">{{ $t('create.form.initialLiquidity') }}</label>
         <input
           v-model.number="form.initial_liquidity"
           type="number"
           class="input input-bordered w-full bg-base-200 border-base-300"
-          placeholder="从余额扣除，作为初始流动性"
+          :placeholder="$t('create.form.liquidityPlaceholder')"
           min="0"
         />
-        <p class="text-xs text-base-content/40 mt-1">可选。提供初始流动性可以让交易更平滑。设为0则不提供。</p>
+        <p class="text-xs text-base-content/40 mt-1">{{ $t('create.form.liquidityHelp') }}</p>
       </div>
 
       <div class="bg-base-200 rounded-lg p-4 text-sm space-y-1">
         <div class="flex justify-between">
-          <span class="text-base-content/50">初始价格</span>
-          <span>是 50% / 否 50%</span>
+          <span class="text-base-content/50">{{ $t('create.form.initialPrice') }}</span>
+          <span>{{ $t('markets.details.yes') }} 50% / {{ $t('markets.details.no') }} 50%</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-base-content/50">流动性参数</span>
+          <span class="text-base-content/50">{{ $t('create.form.liquidity') }}</span>
           <span>b = {{ form.liquidity_param }}</span>
         </div>
       </div>
@@ -114,11 +114,13 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { supabase } from '@/lib/supabase'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const categories = ['体育', 'AI科技', '加密货币', '商业', '金融', '政治', '娱乐', '其他']
 const creating = ref(false)
@@ -185,7 +187,7 @@ async function handleCreate() {
       router.push(`/market/${data.id}`)
     }
   } catch (e: any) {
-    error.value = e.message || '创建失败'
+    error.value = e.message || t('create.errors.createFailed')
   } finally {
     creating.value = false
   }
