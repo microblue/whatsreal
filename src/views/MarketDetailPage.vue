@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto px-4 py-8">
+  <div class="max-w-7xl mx-auto px-4 py-8">
     <!-- Loading -->
     <div v-if="loading" class="text-center py-20">
       <span class="loading loading-spinner loading-lg text-primary"></span>
@@ -9,12 +9,12 @@
       <!-- Header -->
       <div class="mb-8">
         <div class="flex items-center gap-2 mb-2">
-          <span class="badge gradient-bg text-white border-0">{{ market.category }}</span>
-          <span class="text-sm text-base-content/40">截止 {{ market.end_date }}</span>
-          <span v-if="market.status === 'resolved'" class="badge badge-warning">已结算: {{ market.resolution === 'yes' ? '是' : '否' }}</span>
+          <span class="badge gradient-bg text-white border-0">{{ getMarketCategory(market) }}</span>
+          <span class="text-sm text-base-content/40">{{ $t('markets.details.endDate') }} {{ market.end_date }}</span>
+          <span v-if="market.status === 'resolved'" class="badge badge-warning">{{ $t('markets.details.resolved') }}: {{ market.resolution === 'yes' ? $t('markets.details.yes') : $t('markets.details.no') }}</span>
         </div>
-        <h1 class="text-3xl font-bold mb-3">{{ market.title }}</h1>
-        <p class="text-base-content/60">{{ market.description }}</p>
+        <h1 class="text-3xl font-bold mb-3">{{ getMarketTitle(market) }}</h1>
+        <p class="text-base-content/60">{{ getMarketDescription(market) }}</p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -22,15 +22,15 @@
         <div class="lg:col-span-2 space-y-6">
           <!-- Probability display -->
           <div class="bg-base-200 rounded-xl p-6">
-            <h2 class="font-semibold mb-4">当前概率</h2>
+            <h2 class="font-semibold mb-4">{{ $t('markets.details.currentProbability') }}</h2>
             <div class="flex items-center gap-8 mb-4">
               <div class="text-center">
                 <div class="text-4xl font-bold text-success">{{ Math.round(market.yes_price) }}%</div>
-                <div class="text-sm text-base-content/50">是</div>
+                <div class="text-sm text-base-content/50">{{ $t('markets.details.yes') }}</div>
               </div>
               <div class="text-center">
                 <div class="text-4xl font-bold text-error">{{ Math.round(100 - market.yes_price) }}%</div>
-                <div class="text-sm text-base-content/50">否</div>
+                <div class="text-sm text-base-content/50">{{ $t('markets.details.no') }}</div>
               </div>
             </div>
             <div class="prob-bar h-3">
@@ -40,7 +40,7 @@
 
           <!-- Price chart -->
           <div class="bg-base-200 rounded-xl p-6">
-            <h2 class="font-semibold mb-4">价格走势</h2>
+            <h2 class="font-semibold mb-4">{{ $t('markets.details.priceChart') }}</h2>
             <div class="h-48 relative" ref="chartContainer">
               <canvas ref="chartCanvas" class="w-full h-full"></canvas>
             </div>
@@ -48,8 +48,8 @@
 
           <!-- Recent votes -->
           <div class="bg-base-200 rounded-xl p-6">
-            <h2 class="font-semibold mb-4">最近投票</h2>
-            <div v-if="trades.length === 0" class="text-center py-6 text-base-content/40">暂无投票记录</div>
+            <h2 class="font-semibold mb-4">{{ $t('markets.details.recentVotes') }}</h2>
+            <div v-if="trades.length === 0" class="text-center py-6 text-base-content/40">{{ $t('markets.details.noVotes') }}</div>
             <div v-else class="space-y-2 max-h-64 overflow-y-auto">
               <div v-for="trade in trades" :key="trade.id" class="flex items-center justify-between bg-base-300 rounded-lg px-4 py-2 text-sm">
                 <div class="flex items-center gap-2">
@@ -93,7 +93,7 @@
         <!-- Sidebar: Trade panel -->
         <div class="space-y-4">
           <div class="bg-base-200 rounded-xl p-6 sticky top-20">
-            <h2 class="font-semibold mb-4">投票</h2>
+            <h2 class="font-semibold mb-4">{{ $t('markets.details.votingArea') }}</h2>
 
             <!-- YES/NO -->
             <div class="flex gap-2 mb-4">
@@ -102,24 +102,24 @@
                 class="btn flex-1"
                 :class="side === 'yes' ? 'btn-success' : 'btn-ghost'"
               >
-                是 {{ Math.round(market.yes_price) }}¢
+                {{ $t('markets.details.yes') }} {{ Math.round(market.yes_price) }}¢
               </button>
               <button
                 @click="side = 'no'"
                 class="btn flex-1"
                 :class="side === 'no' ? 'btn-error' : 'btn-ghost'"
               >
-                否 {{ Math.round(100 - market.yes_price) }}¢
+                {{ $t('markets.details.no') }} {{ Math.round(100 - market.yes_price) }}¢
               </button>
             </div>
 
             <div class="mb-4">
-              <label class="text-sm text-base-content/50 mb-1 block">投入积分</label>
+              <label class="text-sm text-base-content/50 mb-1 block">{{ $t('profile.overview.stats.totalAssets') }}</label>
               <input
                 v-model.number="amount"
                 type="number"
                 class="input input-bordered w-full bg-base-300 border-base-300"
-                placeholder="输入积分数量"
+                :placeholder="$t('markets.details.volume')"
                 min="1"
               />
             </div>
@@ -143,9 +143,9 @@
             <button
               @click="handleTrade"
               class="btn w-full border-0 gradient-bg text-white"
-              :disabled="trading || !amount || amount <= 0 || !authStore.isAuthenticated || market.status !== 'active'"
+              :disabled="trading || (authStore.isAuthenticated && (!amount || amount <= 0 || market.status !== 'active'))"
             >
-              {{ trading ? '处理中...' : (!authStore.isAuthenticated ? '请先连接钱包' : (market.status !== 'active' ? '投票已关闭' : '确认投票')) }}
+              {{ trading ? $t('common.loading') : (!authStore.isAuthenticated ? $t('markets.details.pleaseConnect') : (market.status !== 'active' ? $t('markets.details.resolved') : $t('common.confirm'))) }}
             </button>
 
             <p v-if="tradeError" class="text-error text-sm mt-2 text-center">{{ tradeError }}</p>
@@ -197,12 +197,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useMarketsStore, type Market, type Trade } from '@/stores/markets'
 import { useAuthStore } from '@/stores/auth'
 import { supabase } from '@/lib/supabase'
+import { getMarketTitle, getMarketDescription, getMarketCategory } from '@/utils/market-i18n'
 
 const route = useRoute()
+const router = useRouter()
 const marketsStore = useMarketsStore()
 const authStore = useAuthStore()
 
@@ -264,13 +266,13 @@ async function loadData() {
     // Load comments
     const { data } = await supabase
       .from('comments')
-      .select('*, profiles(username)')
+      .select('*')
       .eq('market_id', id)
       .order('created_at', { ascending: false })
       .limit(20)
     comments.value = (data || []).map((c: any) => ({
       ...c,
-      username: c.profiles?.username,
+      username: c.user_id ? `${c.user_id.slice(0, 6)}...${c.user_id.slice(-4)}` : 'Anonymous',
     }))
   }
   loading.value = false
@@ -355,6 +357,12 @@ function drawChart() {
 }
 
 async function handleTrade() {
+  // 如果用户未连接钱包，跳转到连接钱包页面
+  if (!authStore.isAuthenticated) {
+    router.push('/auth/connect')
+    return
+  }
+  
   if (!authStore.userId || !market.value) return
   trading.value = true
   tradeError.value = ''
@@ -395,13 +403,13 @@ async function postComment() {
   // Refresh comments
   const { data } = await supabase
     .from('comments')
-    .select('*, profiles(username)')
+    .select('*')
     .eq('market_id', market.value.id)
     .order('created_at', { ascending: false })
     .limit(20)
   comments.value = (data || []).map((c: any) => ({
     ...c,
-    username: c.profiles?.username,
+    username: c.user_id ? `${c.user_id.slice(0, 6)}...${c.user_id.slice(-4)}` : 'Anonymous',
   }))
 }
 

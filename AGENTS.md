@@ -59,3 +59,12 @@ npm run build
 - 只汇报结论和下一步
 
 ### ⚠️ 多个项目已因 context overflow 崩溃过。每次崩溃 = 丢失所有对话记忆 + 人工清理。
+
+
+## 📝 代码命名规范（PEP 8，强制执行）
+- **变量/函数/方法**：`snake_case`（如 `get_user_data`，不是 `getUserData`）
+- **常量**：`UPPER_SNAKE_CASE`（如 `MAX_RETRY_COUNT`）
+- **类名**：`PascalCase`（如 `UserProfile`）
+- **文件名/模块名**：`snake_case`（如 `user_service.js`）
+- ⛔ **禁止驼峰命名**（camelCase）用于变量和函数
+- 适用于所有语言（Python、JS/TS、Dart 等），除非框架强制要求（如 React 组件名用 PascalCase）

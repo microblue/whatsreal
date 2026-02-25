@@ -7,6 +7,11 @@ export interface Market {
   title: string
   description: string
   category: string
+  // 多语言字段
+  title_en?: string
+  description_en?: string
+  category_en?: string
+  //
   image_url?: string
   yes_price: number
   yes_shares: number
@@ -49,18 +54,36 @@ export const useMarketsStore = defineStore('markets', () => {
   const markets = ref<Market[]>([])
   const loading = ref(false)
 
-  const categories = ['全部', '加密市场', '股票市场', '商品市场', '外汇市场', '体育', 'AI科技', '加密货币', '商业', '金融', '政治', '娱乐']
+  const categories = ['全部', '加密市场', '股票市场', '商品市场', '外汇市场', '体育', 'AI科技']
 
   async function fetchMarkets() {
     loading.value = true
-    const { data, error } = await supabase
-      .from('markets')
-      .select('*')
-      .order('volume', { ascending: false })
-    if (!error && data) {
-      markets.value = data as Market[]
+    console.log('🔄 fetchMarkets() 开始执行...')
+    
+    try {
+      const { data, error } = await supabase
+        .from('markets')
+        .select('*')
+        .order('volume', { ascending: false })
+      
+      console.log('📊 Supabase 响应:', { data, error })
+      
+      if (error) {
+        console.error('❌ Supabase 错误:', error)
+        throw error
+      }
+      
+      if (data) {
+        markets.value = data as Market[]
+        console.log('✅ 市场数据加载成功:', data.length, '个市场')
+      } else {
+        console.warn('⚠️ 没有返回数据')
+      }
+    } catch (err) {
+      console.error('💥 fetchMarkets 异常:', err)
+    } finally {
+      loading.value = false
     }
-    loading.value = false
   }
 
   async function fetchMarketById(id: string): Promise<Market | null> {

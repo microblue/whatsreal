@@ -1,42 +1,61 @@
 <template>
   <div class="max-w-2xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-2 gradient-text">创建预测市场</h1>
-    <p class="text-base-content/50 mb-8">提出一个可验证的是/否问题，让市场来回答</p>
+    <h1 class="text-3xl font-bold mb-2 gradient-text">{{ $t('create.title') }}</h1>
+    <p class="text-base-content/50 mb-8">{{ $t('create.subtitle') }}</p>
 
     <div v-if="!authStore.isAuthenticated" class="text-center py-10">
-      <p class="text-base-content/50 mb-4">请先连接钱包</p>
-      <router-link to="/auth/connect" class="btn gradient-bg text-white border-0">连接钱包</router-link>
+      <p class="text-base-content/50 mb-4">{{ $t('create.form.pleaseConnect') }}</p>
+      <router-link to="/auth/connect" class="btn gradient-bg text-white border-0">{{ $t('nav.connect') }}</router-link>
     </div>
 
     <div v-else class="space-y-6">
       <div>
-        <label class="text-sm font-medium mb-1 block">市场标题</label>
+        <label class="text-sm font-medium mb-1 block">{{ $t('create.form.titleChinese') }}</label>
         <input
           v-model="form.title"
           class="input input-bordered w-full bg-base-200 border-base-300"
-          placeholder="例：比特币2026年底能突破20万美元吗？"
+          :placeholder="$t('create.form.titlePlaceholder')"
         />
       </div>
 
       <div>
-        <label class="text-sm font-medium mb-1 block">详细描述</label>
+        <label class="text-sm font-medium mb-1 block">{{ $t('create.form.titleEn') }}</label>
+        <input
+          v-model="form.title_en"
+          class="input input-bordered w-full bg-base-200 border-base-300"
+          :placeholder="$t('create.form.titleEnPlaceholder')"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm font-medium mb-1 block">{{ $t('create.form.descriptionChinese') }}</label>
         <textarea
           v-model="form.description"
           class="textarea textarea-bordered w-full bg-base-200 border-base-300"
           rows="3"
-          placeholder="清楚描述判定条件和数据来源"
+          :placeholder="$t('create.form.descriptionPlaceholder')"
         ></textarea>
       </div>
 
       <div>
-        <label class="text-sm font-medium mb-1 block">分类</label>
+        <label class="text-sm font-medium mb-1 block">{{ $t('create.form.descriptionEn') }}</label>
+        <textarea
+          v-model="form.description_en"
+          class="textarea textarea-bordered w-full bg-base-200 border-base-300"
+          rows="3"
+          :placeholder="$t('create.form.descriptionEnPlaceholder')"
+        ></textarea>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium mb-1 block">{{ $t('create.form.category') }}</label>
         <select v-model="form.category" class="select select-bordered w-full bg-base-200 border-base-300">
           <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
         </select>
       </div>
 
       <div>
-        <label class="text-sm font-medium mb-1 block">截止日期</label>
+        <label class="text-sm font-medium mb-1 block">{{ $t('create.form.endDate') }}</label>
         <input
           v-model="form.end_date"
           type="date"
@@ -84,7 +103,7 @@
       </div>
 
       <button @click="handleCreate" class="btn w-full gradient-bg text-white border-0 btn-lg" :disabled="creating || !form.title || !form.end_date">
-        {{ creating ? '创建中...' : '创建市场' }}
+        {{ creating ? $t('common.loading') : $t('create.buttons.create') }}
       </button>
 
       <p v-if="error" class="text-error text-sm text-center">{{ error }}</p>
@@ -107,7 +126,9 @@ const error = ref('')
 
 const form = reactive({
   title: '',
+  title_en: '',
   description: '',
+  description_en: '',
   category: '其他',
   end_date: '',
   liquidity_param: 100,
@@ -119,10 +140,25 @@ async function handleCreate() {
   creating.value = true
   error.value = ''
   try {
+    // 根据分类设置英文分类名
+    const categoryEnMap: Record<string, string> = {
+      '体育': 'Sports',
+      'AI科技': 'AI & Tech',
+      '加密货币': 'Cryptocurrency',
+      '商业': 'Business',
+      '金融': 'Finance',
+      '政治': 'Politics',
+      '娱乐': 'Entertainment',
+      '其他': 'Other'
+    }
+
     const { data, error: err } = await supabase.from('markets').insert({
       title: form.title,
+      title_en: form.title_en || null,
       description: form.description,
+      description_en: form.description_en || null,
       category: form.category,
+      category_en: categoryEnMap[form.category] || form.category,
       end_date: form.end_date,
       yes_price: 50,
       yes_shares: 0,

@@ -11,6 +11,10 @@ const router = createRouter({
         { path: 'market/:id', name: 'market-detail', component: () => import('@/views/MarketDetailPage.vue') },
         { path: 'create', name: 'create-market', component: () => import('@/views/CreateMarketPage.vue') },
         { path: 'profile', name: 'profile', component: () => import('@/views/ProfilePage.vue') },
+        { path: 'about', name: 'about', component: () => import('@/views/AboutPage.vue') },
+        { path: 'terms', name: 'terms', component: () => import('@/views/TermsPage.vue') },
+        { path: 'privacy', name: 'privacy', component: () => import('@/views/PrivacyPage.vue') },
+        { path: 'how-it-works', name: 'how-it-works', component: () => import('@/views/HowItWorksPage.vue') },
       ]
     },
     {
